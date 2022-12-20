@@ -192,34 +192,19 @@ class Board:
         match result:
             case 1:
                 self.game_over = True
-                player_render = font.render("Tie", True, BLACK)
-                text_rect = player_render.get_rect()
-                text_rect.center = (WIDTH / 2, 50)
-                screen.blit(player_render, text_rect)
+                self.add_text((WIDTH / 2, 50), "Tie", font, BLACK, screen)
             case 2:
                 self.game_over = True
-                player_render = font.render("Player 1 wins", True, DARK_RED)
-                text_rect = player_render.get_rect()
-                text_rect.center = (WIDTH / 2, 50)
-                screen.blit(player_render, text_rect)
+                self.add_text((WIDTH / 2, 50), "Player 1 wins", font, DARK_RED, screen)
             case 3:
                 self.game_over = True
-                player_render = font.render("Player 2 wins", True, CYAN)
-                text_rect = player_render.get_rect()
-                text_rect.center = (WIDTH / 2, 50)
-                screen.blit(player_render, text_rect)
+                self.add_text((WIDTH / 2, 50), "Player 2 wins", font, CYAN, screen)
             case 0:
                 match player:
                     case 1:
-                        player_render = font.render("Player's 1 turn", True, DARK_RED)
-                        text_rect = player_render.get_rect()
-                        text_rect.center = (WIDTH / 2, 50)
-                        screen.blit(player_render, text_rect)
+                        self.add_text((WIDTH / 2, 50), "Player's 1 turn", font, DARK_RED, screen)
                     case 2:
-                        player_render = font.render("Player's 2 turn", True, CYAN)
-                        text_rect = player_render.get_rect()
-                        text_rect.center = (WIDTH / 2, 50)
-                        screen.blit(player_render, text_rect)
+                        self.add_text((WIDTH / 2, 50), "Player's 2 turn", font, CYAN, screen)
         for index in range(12):
             if index < 6:
                 circleColor = GREY_RED

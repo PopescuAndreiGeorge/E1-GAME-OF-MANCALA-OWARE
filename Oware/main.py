@@ -109,10 +109,11 @@ def menu():
                                             player = 1
                 # it's the AI's turn to play
                 elif board.screen_value == 2 and player == 2:
-                    row=1
-                    column = get_random_possible_move(possible_moves[1])
-                    board.update_game_state(row, column)
-                    player = 1
+                    if not board.game_over:
+                        row=1
+                        column = get_random_possible_move(possible_moves[1])
+                        board.update_game_state(row, column)
+                        player = 1
 
             board.draw(SCREEN, player, warning)
         pygame.display.update()
