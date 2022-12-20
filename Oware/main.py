@@ -2,9 +2,18 @@ import pygame
 from button import Button
 from constants import *
 from board import Board
+import random
 
 pygame.init()
 SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+
+
+def get_random_possible_move(possible_moves):
+    list_of_valid_events=[]
+    for index,elem in enumerate(possible_moves):
+        if elem == 1:
+            list_of_valid_events.append(index)
+    return random.choice(list_of_valid_events)
 
 
 def menu():
@@ -61,33 +70,49 @@ def menu():
             quit_button.hover(mouse_pos)
             quit_button.update(SCREEN)
             possible_moves = board.get_possible_moves()
-            if possible_moves[0] == [0, 0, 0, 0, 0, 0] and possible_moves[1] == [0, 0, 0, 0, 0, 0]:
-                board.update_score_with_sum_on_row()
+            # verify if the player can make a valid move
+            if not board.game_over:
+                if possible_moves[0] == [0, 0, 0, 0, 0, 0] and player == 1 or possible_moves[1] == [0, 0, 0, 0, 0,
+                                                                                                    0] and player == 2:
+                    board.update_score_with_sum_on_row()
+                    board.game_over = True
+            # verify each event
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     menu_loop = False
-                mouse_pos = pygame.mouse.get_pos()
-                if event.type == pygame.MOUSEBUTTONDOWN:
-                    if quit_button.verify_click(mouse_pos):
-                        board.screen_value = 0
-                    row, column = board.get_clicked_pit(mouse_pos)
-                    if row != -1 and column != -1:
-                        if player == 1 and row == 1:
-                            warning = "Invalid row for player 1"
-                        elif player == 2 and row == 0:
-                            warning = "Invalid row for player 2"
-                        else:
-                            # because we verified beforehand the row being the correct one for the player,
-                            # the row for this method will serve as the actual coordinate and as the plyer number
-                            if possible_moves[row][column] == 0:
-                                warning = "Invalid move"
-                            else:
-                                board.update_game_state(row, column, possible_moves)
-                                warning = ""
-                                if player == 1:
-                                    player = 2
+                # if we are playing a PVP match, or we are playing VS AI, and it's the player's turn
+                if board.screen_value == 1 or board.screen_value == 2 and player == 1:
+                    mouse_pos = pygame.mouse.get_pos()
+                    if event.type == pygame.MOUSEBUTTONDOWN:
+                        if quit_button.verify_click(mouse_pos):
+                            board.screen_value = 0
+                        # if the game is not over we can continue to make moves that will update the board
+                        if not board.game_over:
+                            row, column = board.get_clicked_pit(mouse_pos)
+                            if row != -1 and column != -1:
+                                if player == 1 and row == 1:
+                                    warning = "Invalid row for player 1"
+                                elif player == 2 and row == 0:
+                                    warning = "Invalid row for player 2"
                                 else:
-                                    player = 1
+                                    # because we verified beforehand the row being the correct one for the player,
+                                    # the row for this method will serve
+                                    # as the actual coordinate and as the plyer number
+                                    if possible_moves[row][column] == 0:
+                                        warning = "Invalid move"
+                                    else:
+                                        board.update_game_state(row, column)
+                                        warning = ""
+                                        if player == 1:
+                                            player = 2
+                                        else:
+                                            player = 1
+                # it's the AI's turn to play
+                elif board.screen_value == 2 and player == 2:
+                    row=1
+                    column = get_random_possible_move(possible_moves[1])
+                    board.update_game_state(row, column)
+                    player = 1
 
             board.draw(SCREEN, player, warning)
         pygame.display.update()

@@ -95,12 +95,11 @@ class Board:
             self.player2_score+=stones
             self.board[1][index] = 0
 
-    def update_game_state(self, row, column, possible_moves):
+    def update_game_state(self, row, column):
         """The function verifies if we are in a final state and updated self.game_over,
         otherwise it updates the board and scores
         :param int row: the row coordinate of the pit
         :param int column: the column coordinate of the pit
-        :param list possible_moves: the list of possible moves for the current state of the board
         """
         player = row
         stone = self.board[row][column]
