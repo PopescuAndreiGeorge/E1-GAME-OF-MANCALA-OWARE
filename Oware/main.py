@@ -14,7 +14,7 @@ def menu():
     clock = pygame.time.Clock()
     board=Board()
     player = 1
-    error_message = ""
+    warning = ""
     while menu_loop:
         clock.tick(FPS)
         if board.screen_value==0:  # verify if we are in the menu or the actual game screen
@@ -55,12 +55,11 @@ def menu():
                 pygame.display.set_caption("Oware P Vs P")
             else:
                 pygame.display.set_caption("Oware P Vs AI")
-
             mouse_pos = pygame.mouse.get_pos()
             quit_button = Button(text_string="Quit to main menu", pos=(WIDTH / 2, HEIGHT - 100))
             quit_button.hover(mouse_pos)
             quit_button.update(SCREEN)
-
+            possible_moves = board.get_possible_moves()
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
                     menu_loop=False
@@ -68,8 +67,29 @@ def menu():
                 if event.type == pygame.MOUSEBUTTONDOWN:
                     if quit_button.verify_click(mouse_pos):
                         board.screen_value = 0
+                    row,column = board.get_clicked_pit(mouse_pos)
+                    if row!= -1 and column !=-1:
+                        if player == 1 and row == 1:
+                            warning = "Invalid row for player 1"
+                        elif player == 2 and row == 0:
+                            warning = "Invalid row for player 2"
+                        else:
+                            if possible_moves[row] == [0, 0, 0, 0, 0, 0]:
+                                board.update_score_with_sum_on_row()
+                            else:
+                                # because we verified beforehand the row being the correct one for the player,
+                                # the row for this method will serve as the actual coordinate and as the plyer number
+                                if possible_moves[row][column]==0:
+                                    warning = "Invalid move"
+                                else:
+                                    board.update_game_state(row,column,possible_moves)
+                                    warning = ""
+                                    if player == 1:
+                                        player = 2
+                                    else:
+                                        player = 1
 
-            board.draw(SCREEN, player, error_message)
+            board.draw(SCREEN, player, warning)
         pygame.display.update()
     pygame.quit()
 
