@@ -88,10 +88,12 @@ class Board:
     def update_score_with_sum_on_row(self):
         """The function updated the score for both players by summing the stone left in each player part of the board
          if there are no more possible moves to be done"""
-        for stones in self.board[0]:
+        for index,stones in enumerate(self.board[0]):
             self.player1_score+=stones
-        for stones in self.board[1]:
+            self.board[0][index]=0
+        for index,stones in enumerate(self.board[1]):
             self.player2_score+=stones
+            self.board[1][index] = 0
 
     def update_game_state(self, row, column, possible_moves):
         """The function verifies if we are in a final state and updated self.game_over,
@@ -102,7 +104,8 @@ class Board:
         """
         player = row
         stone = self.board[row][column]
-
+        start_row=row
+        start_column=column
         self.board[row][column]=0
         while stone:
             if row == 1:
@@ -115,14 +118,18 @@ class Board:
                     row = (row + 1) % 2
                 else:
                     column -= 1
-            stone-=1
-            self.board[row][column]+=1
+            # we make sure that we respect the rule:
+            # The starting house is always left empty; if it contained 12 (or more) seeds,
+            # it is skipped, and the twelfth seed is placed in the next house.
+            if start_row!=row or start_column!=column:
+                stone-=1
+                self.board[row][column]+=1
         sum_stones=0
         while row != player:
             if self.board[row][column]==2 or self.board[row][column]==3:
                 sum_stones += self.board[row][column]
                 self.board[row][column]=0
-                if player == 1:
+                if row == 1:
                     if column == 0:
                         row = (row + 1) % 2
                     else:
@@ -154,13 +161,13 @@ class Board:
                     result[i][j] = 0
             if row == [0, 0, 0, 0, 0, 0]:
                 if i == 0:
-                    for j, stones in enumerate(row):
+                    for j, stones in enumerate(self.board[1]):
                         if stones < 6 - j:
-                            result[i][j] = 0
+                            result[1][j] = 0
                 else:
-                    for j, stones in enumerate(row):
+                    for j, stones in enumerate(self.board[0]):
                         if stones < j + 1:
-                            result[i][j] = 0
+                            result[0][j] = 0
         return result
 
     def draw(self, screen, player, warning_message):
