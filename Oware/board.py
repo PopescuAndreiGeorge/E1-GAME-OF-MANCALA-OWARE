@@ -28,6 +28,7 @@ class Board:
         int player2_score: second player's score
         bool game_over: False if the game is still going, 0 otherwise
     """
+
     def __init__(self):
         self.board = [[4, 4, 4, 4, 4, 4], [4, 4, 4, 4, 4, 4]]
         self.pits_coordinates = create_pits_coordinates()
@@ -88,11 +89,11 @@ class Board:
     def update_score_with_sum_on_row(self):
         """The function updated the score for both players by summing the stone left in each player part of the board
          if there are no more possible moves to be done"""
-        for index,stones in enumerate(self.board[0]):
-            self.player1_score+=stones
-            self.board[0][index]=0
-        for index,stones in enumerate(self.board[1]):
-            self.player2_score+=stones
+        for index, stones in enumerate(self.board[0]):
+            self.player1_score += stones
+            self.board[0][index] = 0
+        for index, stones in enumerate(self.board[1]):
+            self.player2_score += stones
             self.board[1][index] = 0
 
     def update_game_state(self, row, column):
@@ -103,9 +104,9 @@ class Board:
         """
         player = row
         stone = self.board[row][column]
-        start_row=row
-        start_column=column
-        self.board[row][column]=0
+        start_row = row
+        start_column = column
+        self.board[row][column] = 0
         while stone:
             if row == 1:
                 if column == 5:
@@ -120,14 +121,14 @@ class Board:
             # we make sure that we respect the rule:
             # The starting house is always left empty; if it contained 12 (or more) seeds,
             # it is skipped, and the twelfth seed is placed in the next house.
-            if start_row!=row or start_column!=column:
-                stone-=1
-                self.board[row][column]+=1
-        sum_stones=0
+            if start_row != row or start_column != column:
+                stone -= 1
+                self.board[row][column] += 1
+        sum_stones = 0
         while row != player:
-            if self.board[row][column]==2 or self.board[row][column]==3:
+            if self.board[row][column] == 2 or self.board[row][column] == 3:
                 sum_stones += self.board[row][column]
-                self.board[row][column]=0
+                self.board[row][column] = 0
                 if row == 1:
                     if column == 0:
                         row = (row + 1) % 2
@@ -141,7 +142,7 @@ class Board:
             else:
                 break
         if player == 0:
-            self.player1_score+=sum_stones
+            self.player1_score += sum_stones
         else:
             self.player2_score += sum_stones
 
@@ -175,6 +176,11 @@ class Board:
         :param int player: current plyer number
         :param str warning_message: a warning message created by an incorrect player action
         """
+        pygame.draw.rect(screen, GRAY,
+                         (BOARD_WIDTH // 2 - 200, BOARD_HEIGHT // 2 + 10, BOARD_WIDTH + 100, BOARD_HEIGHT + 35))
+        pygame.draw.rect(screen, BLACK,
+                         (BOARD_WIDTH // 2 - 200, BOARD_HEIGHT // 2 + 10, BOARD_WIDTH + 100, BOARD_HEIGHT + 35), 1)
+
         pygame.draw.rect(screen, LIGHT_GRAY,
                          (BOARD_WIDTH // 2 - 150, BOARD_HEIGHT // 2 + 40, BOARD_WIDTH, BOARD_HEIGHT // 2 - 15))
         pygame.draw.rect(screen, BLACK,
@@ -192,19 +198,19 @@ class Board:
         match result:
             case 1:
                 self.game_over = True
-                self.add_text((WIDTH / 2, 50), "Tie", font, BLACK, screen)
+                self.add_text((WIDTH / 2, HEIGHT / 12), "Draw", font, BLACK, screen)
             case 2:
                 self.game_over = True
-                self.add_text((WIDTH / 2, 50), "Player 1 wins", font, DARK_RED, screen)
+                self.add_text((WIDTH / 2, HEIGHT / 12), "Player 1 wins", font, DARK_RED, screen)
             case 3:
                 self.game_over = True
-                self.add_text((WIDTH / 2, 50), "Player 2 wins", font, CYAN, screen)
+                self.add_text((WIDTH / 2, HEIGHT / 12), "Player 2 wins", font, CYAN, screen)
             case 0:
                 match player:
                     case 1:
-                        self.add_text((WIDTH / 2, 50), "Player's 1 turn", font, DARK_RED, screen)
+                        self.add_text((WIDTH / 2, HEIGHT / 12), "Player's 1 turn", font, DARK_RED, screen)
                     case 2:
-                        self.add_text((WIDTH / 2, 50), "Player's 2 turn", font, CYAN, screen)
+                        self.add_text((WIDTH / 2, HEIGHT / 12), "Player's 2 turn", font, CYAN, screen)
         for index in range(12):
             if index < 6:
                 circleColor = GREY_RED
@@ -225,12 +231,12 @@ class Board:
                           screen)
 
         # rendering player1 score
-        self.add_text((450, 135), "Player 1 : {0}".format(self.player1_score),
+        self.add_text((WIDTH / 2, HEIGHT / 4), "Player's 1 score : {0}".format(self.player1_score),
                       pygame.font.Font('freesansbold.ttf', 25), DARK_RED, screen)
         # rendering player2 score
-        self.add_text((450, 415), "Player 2 : {0}".format(self.player2_score),
+        self.add_text((WIDTH / 2, HEIGHT / 1.48), "Player's 2 score : {0}".format(self.player2_score),
                       pygame.font.Font('freesansbold.ttf', 25), CYAN, screen)
         # if a wrong move was selected, we render a warning
         if warning_message:
-            self.add_text((450, 100), "Warning : {0}".format(warning_message),
+            self.add_text((WIDTH / 2, HEIGHT / 6), "Warning : {0}".format(warning_message),
                           pygame.font.Font('freesansbold.ttf', 30), BLACK, screen)

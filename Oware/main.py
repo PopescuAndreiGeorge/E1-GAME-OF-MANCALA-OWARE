@@ -9,8 +9,8 @@ SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
 
 
 def get_random_possible_move(possible_moves):
-    list_of_valid_events=[]
-    for index,elem in enumerate(possible_moves):
+    list_of_valid_events = []
+    for index, elem in enumerate(possible_moves):
         if elem == 1:
             list_of_valid_events.append(index)
     return random.choice(list_of_valid_events)
@@ -110,7 +110,7 @@ def menu():
                 # it's the AI's turn to play
                 elif board.screen_value == 2 and player == 2:
                     if not board.game_over:
-                        row=1
+                        row = 1
                         column = get_random_possible_move(possible_moves[1])
                         board.update_game_state(row, column)
                         player = 1
